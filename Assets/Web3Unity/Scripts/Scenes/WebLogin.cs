@@ -6,6 +6,11 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 
+public class AuthToken
+{
+    public string token;
+}
+
 
 #if UNITY_WEBGL
 public class WebLogin : MonoBehaviour
