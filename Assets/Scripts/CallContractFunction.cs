@@ -255,6 +255,18 @@ public class CallContractFunction : MonoBehaviour
                 return;
             }
         }
+
+        // send StartGame web request
+        try
+        {
+            await WebRequests.StartGame();
+        }
+        catch
+        {
+            Debug.Log("StartGame failed");
+            return;
+        }
+
         string method = "burnCredit";
 
         string args = JsonConvert.SerializeObject(new object[] { "0" });

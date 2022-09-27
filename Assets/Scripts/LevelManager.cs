@@ -35,8 +35,9 @@ public class LevelManager : MonoBehaviour
         SceneManager.LoadScene("HighScores");
     }
 
-    public void LoadGameOver()
+    public async void LoadGameOver()
     {
+        await WebRequests.EndGame();
         StartCoroutine(WaitAndLoad("GameOver", sceneLoadDelay));
     }
 
