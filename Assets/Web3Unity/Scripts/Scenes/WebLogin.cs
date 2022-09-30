@@ -28,6 +28,8 @@ public class WebLogin : MonoBehaviour
 
     private string account;
 
+    public static string baseUrl = "https://crypto-space-shooter.herokuapp.com";
+
     public void OnLogin()
     {
         Web3Connect();
@@ -49,7 +51,7 @@ public class WebLogin : MonoBehaviour
             UnityEngine
                 .Networking
                 .UnityWebRequest
-                .Post("http://localhost:5002/auth", form);
+                .Post(baseUrl + "/auth", form);
         yield return request.SendWebRequest();
 
         // check if there was any error in the response

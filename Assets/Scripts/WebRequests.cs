@@ -16,13 +16,16 @@ public class GameId
 
 public class WebRequests : MonoBehaviour
 {
+    public static string baseUrl = "https://crypto-space-shooter.herokuapp.com";
+
     public static async Task<bool> GetNonce()
     {
         var request =
             UnityEngine
                 .Networking
                 .UnityWebRequest
-                .Get("http://localhost:5002/account/nonce/" +
+                .Get(baseUrl +
+                "/account/nonce/" +
                 PlayerPrefs.GetString("Account"));
         request
             .SetRequestHeader("Authorization",
@@ -76,7 +79,7 @@ public class WebRequests : MonoBehaviour
             UnityEngine
                 .Networking
                 .UnityWebRequest
-                .Post("http://localhost:5002/game/start", form);
+                .Post(baseUrl + "/game/start", form);
         request
             .SetRequestHeader("Authorization",
             "Bearer " + PlayerPrefs.GetString("AuthToken"));
@@ -117,7 +120,7 @@ public class WebRequests : MonoBehaviour
             UnityEngine
                 .Networking
                 .UnityWebRequest
-                .Post("http://localhost:5002/game/end", form);
+                .Post(baseUrl + "/game/end", form);
         request
             .SetRequestHeader("Authorization",
             "Bearer " + PlayerPrefs.GetString("AuthToken"));

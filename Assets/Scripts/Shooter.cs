@@ -68,6 +68,8 @@ public class Shooter : MonoBehaviour
 
     IEnumerator FireContinously()
     {
+        // prevent going over firing rate by spamming LMB
+        yield return new WaitForSeconds(0.1f);
         while (isFiring)
         {
             GameObject instance =
