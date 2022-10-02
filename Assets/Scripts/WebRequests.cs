@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -12,6 +14,13 @@ public class Nonce
 public class GameId
 {
     public string gameId;
+}
+
+public class Score
+{
+    public int score;
+
+    public string creatorAddress;
 }
 
 public class WebRequests : MonoBehaviour
@@ -143,6 +152,33 @@ public class WebRequests : MonoBehaviour
 
             // return from the function
             return "";
+        }
+    }
+
+    public static async Task<List<Score>> GetHighScores()
+    {
+        var request =
+            UnityEngine.Networking.UnityWebRequest.Get(baseUrl + "/score");
+        request
+            .SetRequestHeader("Authorization",
+            "Bearer " + PlayerPrefs.GetString("AuthToken"));
+        await request.SendWebRequest();
+
+        // if request was successful, get the game id from the response
+        if (request.result == UnityWebRequest.Result.Success)
+        {
+            // get the game id from the response
+            var response = request.downloadHandler.text;
+            Debug.Log (response);
+            var list = JsonConvert.DeserializeObject<List<Score>>(response);
+            return list;
+        }
+        else
+        {
+            Debug.Log(request.error);
+
+            // return from the function
+            return null;
         }
     }
 }

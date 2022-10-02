@@ -37,6 +37,10 @@ public class LeagueOperator : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI leaguePrize;
 
+    // get resolve league button
+    [SerializeField]
+    Button resolveLeagueButton;
+
     [HideInInspector]
     public float availableCredits = 0;
 
@@ -49,9 +53,11 @@ public class LeagueOperator : MonoBehaviour
     {
         // Fetch the league information
         GetLeagueSponsor();
+        InvokeRepeating("GetLeagueStart", 0f, 1f);
+        GetLeagueReward();
     }
 
-    public async Task<string> GetLeagueStart()
+    public async void GetLeagueStart()
     {
         string method = "leagueStart";
         try
@@ -64,30 +70,51 @@ public class LeagueOperator : MonoBehaviour
                     contractABI,
                     method,
                     "[]");
-            return response;
+
+            // end time is 3 days after start time seconds
+            int endTime = Int32.Parse(response) + 259200;
+
+            // time now
+            int timeNow = (int) DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+            // convert the difference to hours, minutes and seconds
+            int timeLeft = endTime - timeNow;
+
+            Debug.Log("Time left: " + timeLeft);
+            int hours = timeLeft / 3600;
+            int minutes = (timeLeft % 3600) / 60;
+            int seconds = (timeLeft % 3600) % 60;
+
+            if (timeLeft <= 0)
+            {
+                resolveLeagueButton.interactable = true;
+                leagueTimer.text =
+                    "League has ended, click below to resolve it and start a new one";
+            }
+            else
+            {
+                // display the time remaining
+                leagueTimer.text =
+                    "League Ends In: " +
+                    hours +
+                    "H " +
+                    minutes +
+                    "M " +
+                    seconds +
+                    "S";
+            }
         }
         catch (Exception e)
         {
             Debug.LogException (e);
-            return "";
         }
     }
 
     public static byte[] FromHexString(string hexString)
     {
-        // remove 0x from the beginning of the string
         hexString = hexString.Substring(2);
-
-        // // slice the string into pairs of characters
-        // byte[] hexChars =
-        //     Enumerable
-        //         .Range(0, hexString.Length)
-        //         .Where(x => x % 2 == 0)
-        //         .Select(x => Convert.ToByte(hexString.Substring(x, 2), 16))
-        //         .ToArray();
         byte[] hexChars = new byte[hexString.Length / 2];
 
-        // split the string into an array of two character strings
         for (int i = 0; i < hexChars.Length; i++)
         {
             hexChars[i] = Convert.ToByte(hexString.Substring(i * 2, 2), 16);
@@ -110,9 +137,9 @@ public class LeagueOperator : MonoBehaviour
                     method,
                     "[]");
 
-            Debug.Log("League Sponsor initial response: " + response);
             byte[] sponsor = FromHexString(response);
             string sponsorText = System.Text.Encoding.UTF8.GetString(sponsor);
+            leagueSponsorText.text = sponsorText ?? "No Sponsor";
             Debug.Log("League Sponsor: " + sponsorText);
         }
         catch (Exception e)
@@ -121,29 +148,7 @@ public class LeagueOperator : MonoBehaviour
         }
     }
 
-    public async Task<string> GetLeagueNumber()
-    {
-        string method = "leagueNumber";
-        try
-        {
-            string response =
-                await EVM
-                    .Call(chain,
-                    network,
-                    contractAddress,
-                    contractABI,
-                    method,
-                    "[]");
-            return response;
-        }
-        catch (Exception e)
-        {
-            Debug.LogException (e);
-            return "";
-        }
-    }
-
-    public async Task<string> GetLeagueReward()
+    public async void GetLeagueReward()
     {
         string method = "leagueReward";
         try
@@ -156,19 +161,25 @@ public class LeagueOperator : MonoBehaviour
                     contractABI,
                     method,
                     "[]");
-            return response;
+            Debug.Log("leagueReward " + response);
+            float wei = float.Parse(response);
+            float eth = wei / 1000000000000000000;
+            Debug.Log("Balance: " + eth);
+            string parsedBalance =
+                Convert.ToDecimal(eth).ToString("0.00 MATIC");
+            leaguePrize.text = "Current prize: " + parsedBalance;
         }
         catch (Exception e)
         {
             Debug.LogException (e);
-            return "";
         }
     }
 
-    public async Task<string> WrapUpLeague()
+    public async void WrapUpLeague()
     {
         string method = "wrapUpLeagueAndStartNew";
         string gasPrice = await EVM.GasPrice(chain, network);
+        string args = "[]";
         try
         {
             string response =
@@ -176,7 +187,7 @@ public class LeagueOperator : MonoBehaviour
                     .SendContract(method,
                     contractABI,
                     contractAddress,
-                    "",
+                    args,
                     "0",
                     "",
                     gasPrice);
@@ -184,21 +195,18 @@ public class LeagueOperator : MonoBehaviour
             if (txSuccess)
             {
                 Debug.Log("Transaction successful");
-                await GetLeagueNumber();
-                await GetLeagueStart();
-                await GetLeagueReward();
-                return response;
+                GetLeagueStart();
+                GetLeagueReward();
+                GetLeagueSponsor();
             }
             else
             {
                 Debug.Log("Transaction failed");
-                return "";
             }
         }
         catch (Exception e)
         {
             Debug.LogException (e);
-            return "";
         }
     }
 

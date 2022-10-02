@@ -59,7 +59,7 @@ public class CallContractFunction : MonoBehaviour
         GetCredits1155();
     }
 
-    private string TruncateAddress(string value)
+    public string TruncateAddress(string value)
     {
         return value.Substring(0, 3) +
         "..." +

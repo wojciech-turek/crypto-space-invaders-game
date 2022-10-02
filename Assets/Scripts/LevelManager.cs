@@ -11,8 +11,6 @@ public class LevelManager : MonoBehaviour
 
     ScoreKeeper scoreKeeper;
 
-    CallContractFunction callContractFunction;
-
     public void LoadGame()
     {
         scoreKeeper = FindObjectOfType<ScoreKeeper>();

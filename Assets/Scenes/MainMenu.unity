@@ -543,7 +543,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 628179870849927035, guid: 9d8aa67aeb92541088616440db799d4e, type: 3}
+      - m_Target: {fileID: 1847795229860882531}
         m_TargetAssemblyTypeName: LevelManager, Assembly-CSharp
         m_MethodName: LoadHighScores
         m_Mode: 1
@@ -651,7 +651,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'League ends in: 72 hours 12 minutes 6 seconds'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3f4c1b4a913e041f9b33aa1b74ac7bdf, type: 2}
   m_sharedMaterial: {fileID: -75263288959539206, guid: 3f4c1b4a913e041f9b33aa1b74ac7bdf, type: 2}
@@ -714,7 +714,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 48.77179, y: -36.658966, z: 59.35251, w: -7.0115547}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -786,7 +786,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Microsoft Inc.
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 14e94ff5c7a68446db6f9ca5a0492fbd, type: 2}
   m_sharedMaterial: {fileID: -75263288959539206, guid: 14e94ff5c7a68446db6f9ca5a0492fbd, type: 2}
@@ -1172,9 +1172,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TxOverlay: {fileID: 2056363634}
   txPendingText: {fileID: 2114166900}
-  leagueSponsorText: {fileID: 0}
-  leagueTimer: {fileID: 0}
-  leaguePrize: {fileID: 0}
+  leagueSponsorText: {fileID: 247189527}
+  leagueTimer: {fileID: 232212166}
+  leaguePrize: {fileID: 1129587328}
+  resolveLeagueButton: {fileID: 2013232425}
   availableCredits: 0
 --- !u!4 &391130850
 Transform:
@@ -2488,7 +2489,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Current prize pool: 326 MATIC'
+  m_text: 'Current prize: '
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9dfd61a5037864f5e86f0b74138ce63f, type: 2}
   m_sharedMaterial: {fileID: -75263288959539206, guid: 9dfd61a5037864f5e86f0b74138ce63f, type: 2}
@@ -2636,15 +2637,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: Resolve league
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 1c08e5766a9f947558b04bdd32e713b3, type: 2}
-  m_sharedMaterial: {fileID: -5359601071282789021, guid: 1c08e5766a9f947558b04bdd32e713b3, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 49aca15e163304f7ca13884cdc066d56, type: 2}
+  m_sharedMaterial: {fileID: -5158879740964472936, guid: 49aca15e163304f7ca13884cdc066d56, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -3420,7 +3421,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.60784316, g: 0.972549, b: 0.91764706, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -3441,7 +3442,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2013232426}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 391130849}
+        m_TargetAssemblyTypeName: LeagueOperator, Assembly-CSharp
+        m_MethodName: WrapUpLeague
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2013232426
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3455,7 +3468,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.15686275}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.12156863}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3553,6 +3566,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9d8aa67aeb92541088616440db799d4e, type: 3}
+--- !u!114 &1847795229860882531 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 628179870849927035, guid: 9d8aa67aeb92541088616440db799d4e, type: 3}
+  m_PrefabInstance: {fileID: 1847795229860882530}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b465b58de7c34e31acd301b4658a9c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6191820206667434057
 PrefabInstance:
   m_ObjectHideFlags: 0
