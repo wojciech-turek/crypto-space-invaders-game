@@ -31,6 +31,10 @@ public class CallContractFunction : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI txPendingText;
 
+    ScoreKeeper scoreKeeper;
+
+    LeagueOperator leagueOperator;
+
     //set chain
     string chain = "polygon";
 
@@ -57,6 +61,7 @@ public class CallContractFunction : MonoBehaviour
     {
         GetNativeBalance();
         GetCredits1155();
+        leagueOperator = FindObjectOfType<LeagueOperator>();
     }
 
     public string TruncateAddress(string value)
@@ -136,6 +141,7 @@ public class CallContractFunction : MonoBehaviour
             {
                 await Task.Delay(1000);
                 GetCredits1155();
+                leagueOperator.GetLeagueReward();
             }
         }
         catch (Exception e)
@@ -256,6 +262,8 @@ public class CallContractFunction : MonoBehaviour
                 return;
             }
         }
+        scoreKeeper = FindObjectOfType<ScoreKeeper>();
+        scoreKeeper.ResetScore();
 
         // send StartGame web request
         try

@@ -23,9 +23,19 @@ public class Score
     public string creatorAddress;
 }
 
+public class GameEnd
+{
+    public string gameId;
+
+    public int rank;
+}
+
 public class WebRequests : MonoBehaviour
 {
     public static string baseUrl = "https://crypto-space-shooter.herokuapp.com";
+
+    // public static string baseUrl = "http://localhost:5002";
+    static ScoreKeeper scoreKeeper;
 
     public static async Task<bool> GetNonce()
     {
@@ -115,15 +125,14 @@ public class WebRequests : MonoBehaviour
         }
     }
 
-    public static async Task<string> EndGame()
+    public static async Task<int> EndGame()
     {
         await GetNonce();
 
-        ScoreKeeper scoreKeeper =
-            GameObject.Find("ScoreKeeper").GetComponent<ScoreKeeper>();
+        scoreKeeper = FindObjectOfType<ScoreKeeper>();
 
         WWWForm form = new WWWForm();
-        form.AddField("Score", scoreKeeper.GetScore());
+        form.AddField("score", scoreKeeper.GetScore());
         form.AddField("gameId", PlayerPrefs.GetString("GameId"));
         var request =
             UnityEngine
@@ -140,18 +149,16 @@ public class WebRequests : MonoBehaviour
         {
             // get the game id from the response
             var response = request.downloadHandler.text;
-            var gameId = JsonUtility.FromJson<GameId>(response).gameId;
+            var rank = JsonUtility.FromJson<GameEnd>(response).rank;
 
-            // set the game id in the player prefs
-            PlayerPrefs.SetString("GameId", gameId);
-            return gameId;
+            // set the rank in the player prefs
+            PlayerPrefs.SetInt("Rank", rank);
+            return rank;
         }
         else
         {
             Debug.Log(request.error);
-
-            // return from the function
-            return "";
+            return 0;
         }
     }
 

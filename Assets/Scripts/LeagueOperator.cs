@@ -93,15 +93,20 @@ public class LeagueOperator : MonoBehaviour
             }
             else
             {
+                string hoursLeft = hours < 10 ? "0" + hours : hours.ToString();
+                string minutesLeft =
+                    minutes < 10 ? "0" + minutes : minutes.ToString();
+                string secondsLeft =
+                    seconds < 10 ? "0" + seconds : seconds.ToString();
+
                 // display the time remaining
                 leagueTimer.text =
                     "League Ends In: " +
-                    hours +
-                    "H " +
-                    minutes +
-                    "M " +
-                    seconds +
-                    "S";
+                    hoursLeft +
+                    ":" +
+                    minutesLeft +
+                    ":" +
+                    secondsLeft;
             }
         }
         catch (Exception e)

@@ -272,9 +272,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: CallContractFunction, Assembly-CSharp
-        m_MethodName: BuyCredits
+      - m_Target: {fileID: 421887889}
+        m_TargetAssemblyTypeName: LevelManager, Assembly-CSharp
+        m_MethodName: LoadMainMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -406,7 +406,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 421887889}
         m_TargetAssemblyTypeName: LevelManager, Assembly-CSharp
         m_MethodName: LoadHighScores
         m_Mode: 1
@@ -534,6 +534,74 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &421887888
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 6126619989666171378, guid: 9d8aa67aeb92541088616440db799d4e, type: 3}
+      propertyPath: m_RootOrder
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6126619989666171378, guid: 9d8aa67aeb92541088616440db799d4e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6126619989666171378, guid: 9d8aa67aeb92541088616440db799d4e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6126619989666171378, guid: 9d8aa67aeb92541088616440db799d4e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6126619989666171378, guid: 9d8aa67aeb92541088616440db799d4e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6126619989666171378, guid: 9d8aa67aeb92541088616440db799d4e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6126619989666171378, guid: 9d8aa67aeb92541088616440db799d4e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6126619989666171378, guid: 9d8aa67aeb92541088616440db799d4e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6126619989666171378, guid: 9d8aa67aeb92541088616440db799d4e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6126619989666171378, guid: 9d8aa67aeb92541088616440db799d4e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6126619989666171378, guid: 9d8aa67aeb92541088616440db799d4e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8299248251204360463, guid: 9d8aa67aeb92541088616440db799d4e, type: 3}
+      propertyPath: m_Name
+      value: LevelManager
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9d8aa67aeb92541088616440db799d4e, type: 3}
+--- !u!114 &421887889 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 628179870849927035, guid: 9d8aa67aeb92541088616440db799d4e, type: 3}
+  m_PrefabInstance: {fileID: 421887888}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b465b58de7c34e31acd301b4658a9c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &500387261 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7547869968912858417, guid: 1f66b842481c842228dd4daf146d0fab, type: 3}
@@ -1594,6 +1662,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1516929938}
   - component: {fileID: 1516929939}
+  - component: {fileID: 1516929940}
   m_Layer: 5
   m_Name: Rank Group
   m_TagString: Untagged
@@ -1649,6 +1718,19 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &1516929940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1516929937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7de4f8e4224d749af85d6b490733c0a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rankText: {fileID: 1115663396}
 --- !u!1 &1531105596
 GameObject:
   m_ObjectHideFlags: 0
