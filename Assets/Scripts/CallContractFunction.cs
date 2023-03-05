@@ -36,18 +36,16 @@ public class CallContractFunction : MonoBehaviour
     LeagueOperator leagueOperator;
 
     //set chain
-    string chain = "polygon";
+    string chain = "nahmii";
 
     // set network
-    string network = "mainnet";
+    string network = "testnet";
 
     private string isApprovedForAll = "false";
 
     int creditsTokenId = 0;
 
-    // smart contract address
-    private string
-        contractAddress = "0xEef42cF1d00F5440173F36855D633eC1140cee4c";
+    private string rpc = "https://ngeth.testnet.n3.nahmii.io";
 
     [HideInInspector]
     public float availableCredits = 0;
@@ -76,17 +74,18 @@ public class CallContractFunction : MonoBehaviour
         string account = PlayerPrefs.GetString("Account");
 
         connectedWallet.text = "Wallet " + TruncateAddress(account);
-        string balance = await EVM.BalanceOf(chain, network, account);
+        string balance = await EVM.BalanceOf(chain, network, account, rpc);
         float wei = float.Parse(balance);
         float eth = wei / 1000000000000000000;
         Debug.Log("Balance: " + eth);
-        string parsedBalance = Convert.ToDecimal(eth).ToString("0.00 MATIC");
+        string parsedBalance = Convert.ToDecimal(eth).ToString("0.00 ETH");
         nativeBalance.text = "Balance: " + parsedBalance;
     }
 
     public async Task<BigInteger> GetCreditPrice()
     {
         string method = "creditPrice";
+        string contractAddress = await WebRequests.GetContractAddress();
         try
         {
             string response =
@@ -96,7 +95,7 @@ public class CallContractFunction : MonoBehaviour
                     contractAddress,
                     contractABI,
                     method,
-                    "[]");
+                    "[]", rpc);
             BigInteger weiPrice = BigInteger.Parse(response);
             return weiPrice;
         }
@@ -123,9 +122,10 @@ public class CallContractFunction : MonoBehaviour
                     int.Parse(creditsToBuy.text)
                 });
 
-        string gasPrice = await EVM.GasPrice(chain, network);
+        string gasPrice = await EVM.GasPrice(chain, network, rpc);
         try
         {
+            string contractAddress = await WebRequests.GetContractAddress();
             string response =
                 await Web3GL
                     .SendContract(method,
@@ -153,9 +153,10 @@ public class CallContractFunction : MonoBehaviour
     public async void GetCredits1155()
     {
         string account = PlayerPrefs.GetString("Account");
+        string contractAddress = await WebRequests.GetContractAddress();
         BigInteger result =
             await ERC1155
-                .BalanceOf(chain, network, contractAddress, account, "0");
+                .BalanceOf(chain, network, contractAddress, account, "0",rpc);
         Debug.Log("ERC1155 " + result);
         float wei = float.Parse(result.ToString());
         float eth = wei / 1000000000000000000;
@@ -175,6 +176,7 @@ public class CallContractFunction : MonoBehaviour
     public async Task<bool> CheckIsApproved()
     {
         string account = PlayerPrefs.GetString("Account");
+        string contractAddress = await WebRequests.GetContractAddress();
         try
         {
             isApprovedForAll =
@@ -184,7 +186,7 @@ public class CallContractFunction : MonoBehaviour
                     contractAddress,
                     contractABI,
                     "isApprovedForAll",
-                    "[\"" + account + "\",\"" + contractAddress + "\"]");
+                    "[\"" + account + "\",\"" + contractAddress + "\"]", rpc);
             Debug.Log("Approved result: " + isApprovedForAll);
             if (isApprovedForAll == "false")
             {
@@ -205,6 +207,7 @@ public class CallContractFunction : MonoBehaviour
 
     public async Task<string> ApproveAll()
     {
+        string contractAddress = await WebRequests.GetContractAddress();
         string response =
             await ERC1155
                 .SetApprovalForAll(ERC1155.BroadcastMethod.WebGL,
@@ -212,7 +215,7 @@ public class CallContractFunction : MonoBehaviour
                 network,
                 contractAddress,
                 contractAddress,
-                true);
+                true, "", rpc);
         return response;
     }
 
@@ -221,7 +224,7 @@ public class CallContractFunction : MonoBehaviour
         TxOverlay.SetActive(true);
         txPendingText.text = "Transaction pending...";
         Debug.Log("Awaiting transaction: " + txHash);
-        string txConfirmed = await EVM.TxStatus(chain, network, txHash);
+        string txConfirmed = await EVM.TxStatus(chain, network, txHash, rpc);
         if (txConfirmed == "success")
         {
             Debug.Log("Transaction successful");
@@ -268,7 +271,7 @@ public class CallContractFunction : MonoBehaviour
         // send StartGame web request
         try
         {
-            await WebRequests.StartGame();
+           await WebRequests.StartGame();
         }
         catch
         {
@@ -280,9 +283,10 @@ public class CallContractFunction : MonoBehaviour
 
         string args = JsonConvert.SerializeObject(new object[] { "0" });
 
-        string gasPrice = await EVM.GasPrice(chain, network);
+        string gasPrice = await EVM.GasPrice(chain, network, rpc);
         try
         {
+            string contractAddress = await WebRequests.GetContractAddress();
             string response =
                 await Web3GL
                     .SendContract(method,

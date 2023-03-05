@@ -7,20 +7,19 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LeagueOperator : MonoBehaviour
 {
     //set chain
-    string chain = "polygon";
+    string chain = "nahmii";
 
     // set network
-    string network = "mainnet";
+    string network = "testnet";
 
-    // smart contract address
-    private string
-        contractAddress = "0xEef42cF1d00F5440173F36855D633eC1140cee4c";
+    private string rpc = "https://ngeth.testnet.n3.nahmii.io";
 
     private string sponsorName = "";
 
@@ -60,6 +59,8 @@ public class LeagueOperator : MonoBehaviour
     [HideInInspector]
     public float availableCredits = 0;
 
+    private int leagueStartedAt = -1;
+
     // set contract ABI
     private readonly string
         contractABI =
@@ -69,32 +70,19 @@ public class LeagueOperator : MonoBehaviour
     {
         // Fetch the league information
         GetLeagueSponsor();
-        InvokeRepeating("GetLeagueStart", 0f, 1f);
+        GetLeagueStart();
         GetLeagueReward();
+        InvokeRepeating("UpdateLeagueTime", 0f, 1f);
     }
 
-    public async void GetLeagueStart()
+    private void UpdateLeagueTime()
     {
-        string method = "leagueStart";
-        try
+        if (leagueStartedAt > 0)
         {
-            string response =
-                await EVM
-                    .Call(chain,
-                    network,
-                    contractAddress,
-                    contractABI,
-                    method,
-                    "[]");
-
-            // end time is 2 days after start time seconds
-            int endTime = Int32.Parse(response) + 172800;
-
-            // time now
-            int timeNow = (int) DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-
+            int leagueEnd = leagueStartedAt + 172800;
+            int timeNow = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             // convert the difference to hours, minutes and seconds
-            int timeLeft = endTime - timeNow;
+            int timeLeft = leagueEnd - timeNow;
 
             int hours = timeLeft / 3600;
             int minutes = (timeLeft % 3600) / 60;
@@ -124,9 +112,29 @@ public class LeagueOperator : MonoBehaviour
                     secondsLeft;
             }
         }
+    }
+
+    public async void GetLeagueStart()
+    {
+        string method = "leagueStart";
+        string contractAddress = await WebRequests.GetContractAddress();
+        try
+        {
+            string response =
+                await EVM
+                    .Call(chain,
+                    network,
+                    contractAddress,
+                    contractABI,
+                    method,
+                    "[]", rpc);
+
+            leagueStartedAt = Int32.Parse(response);
+
+        }
         catch (Exception e)
         {
-            Debug.LogException (e);
+            Debug.LogException(e);
         }
     }
 
@@ -146,6 +154,7 @@ public class LeagueOperator : MonoBehaviour
     public async void GetLeagueSponsor()
     {
         string method = "leagueSponsor";
+        string contractAddress = await WebRequests.GetContractAddress();
         try
         {
             string response =
@@ -155,7 +164,7 @@ public class LeagueOperator : MonoBehaviour
                     contractAddress,
                     contractABI,
                     method,
-                    "[]");
+                    "[]", rpc);
 
             byte[] sponsor = FromHexString(response);
             string sponsorText = System.Text.Encoding.UTF8.GetString(sponsor);
@@ -174,7 +183,7 @@ public class LeagueOperator : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.LogException (e);
+            Debug.LogException(e);
         }
     }
 
@@ -196,7 +205,7 @@ public class LeagueOperator : MonoBehaviour
         if (
             sponsorName != "" &&
             sponsorAmount != "" &&
-            Int32.Parse(sponsorAmount) >= 10
+            Int32.Parse(sponsorAmount) >= 1
         )
         {
             sponsorButton.interactable = true;
@@ -220,13 +229,13 @@ public class LeagueOperator : MonoBehaviour
     public async void SponsorLeague()
     {
         string method = "sponsorLeague";
-        string gasPrice = await EVM.GasPrice(chain, network);
-        Debug.Log (sponsorAmount);
+        string gasPrice = await EVM.GasPrice(chain, network, rpc);
+        Debug.Log(sponsorAmount);
         BigInteger weiAmount =
             BigInteger.Parse("1000000000000000000") *
             BigInteger.Parse(sponsorAmount);
 
-        Debug.Log (weiAmount);
+        Debug.Log(weiAmount);
 
         // convert sponsor name to bytes
         byte[] sponsorNameBytes =
@@ -236,7 +245,7 @@ public class LeagueOperator : MonoBehaviour
         string sponsorNameHex =
             BitConverter.ToString(sponsorNameBytes).Replace("-", string.Empty);
         string args = "[\"" + "0x" + sponsorNameHex + "\"]";
-
+        string contractAddress = await WebRequests.GetContractAddress();
         try
         {
             string response =
@@ -266,13 +275,14 @@ public class LeagueOperator : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.LogException (e);
+            Debug.LogException(e);
         }
     }
 
     public async void GetLeagueReward()
     {
         string method = "leagueReward";
+        string contractAddress = await WebRequests.GetContractAddress();
         try
         {
             string response =
@@ -282,25 +292,26 @@ public class LeagueOperator : MonoBehaviour
                     contractAddress,
                     contractABI,
                     method,
-                    "[]");
+                    "[]", rpc);
             Debug.Log("leagueReward " + response);
             float wei = float.Parse(response);
             float eth = wei / 1000000000000000000;
             Debug.Log("Balance: " + eth);
             string parsedBalance =
-                Convert.ToDecimal(eth).ToString("0.00 MATIC");
+                Convert.ToDecimal(eth).ToString("0.00 ETH");
             leaguePrize.text = "Current prize: " + parsedBalance;
         }
         catch (Exception e)
         {
-            Debug.LogException (e);
+            Debug.LogException(e);
         }
     }
 
     public async void WrapUpLeague()
     {
         string method = "wrapUpLeagueAndStartNew";
-        string gasPrice = await EVM.GasPrice(chain, network);
+        string contractAddress = await WebRequests.GetContractAddress();
+        string gasPrice = await EVM.GasPrice(chain, network, rpc);
         string args = "[]";
         try
         {
@@ -328,7 +339,7 @@ public class LeagueOperator : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.LogException (e);
+            Debug.LogException(e);
         }
     }
 
@@ -337,7 +348,7 @@ public class LeagueOperator : MonoBehaviour
         TxOverlay.SetActive(true);
         txPendingText.text = "Transaction pending...";
         Debug.Log("Awaiting transaction: " + txHash);
-        string txConfirmed = await EVM.TxStatus(chain, network, txHash);
+        string txConfirmed = await EVM.TxStatus(chain, network, txHash, rpc);
         if (txConfirmed == "success")
         {
             Debug.Log("Transaction successful");

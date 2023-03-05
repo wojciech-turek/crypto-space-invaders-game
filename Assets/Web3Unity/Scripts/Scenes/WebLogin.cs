@@ -28,7 +28,7 @@ public class WebLogin : MonoBehaviour
 
     private string account;
 
-    public static string baseUrl = "https://crypto-space-shooter.herokuapp.com";
+    public static string baseUrl = "https://shooter-server-323.herokuapp.com";
 
     public void OnLogin()
     {

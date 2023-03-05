@@ -30,19 +30,21 @@ public class GameEnd
     public int rank;
 }
 
-public class WebRequests : MonoBehaviour
+public class ContractAddress
 {
-    public static string baseUrl = "https://crypto-space-shooter.herokuapp.com";
+    public string contractAddress;
+}
 
-    // public static string baseUrl = "http://localhost:5002";
-    static ScoreKeeper scoreKeeper;
+public class WebRequests: MonoBehaviour
+{
+    public static string baseUrl = "https://shooter-server-323.herokuapp.com";
+
+    private static string contractAddress = null;
 
     public static async Task<bool> GetNonce()
     {
         var request =
-            UnityEngine
-                .Networking
-                .UnityWebRequest
+            UnityWebRequest
                 .Get(baseUrl +
                 "/account/nonce/" +
                 PlayerPrefs.GetString("Account"));
@@ -58,7 +60,7 @@ public class WebRequests : MonoBehaviour
 
             // get the nonce from the response
             var response = request.downloadHandler.text;
-            Debug.Log (response);
+            Debug.Log(response);
             int nonce = JsonUtility.FromJson<Nonce>(response).nonce;
             Debug.Log("Nonce: " + nonce);
 
@@ -73,6 +75,16 @@ public class WebRequests : MonoBehaviour
             // return from the function
             return false;
         }
+    }
+
+    public async static Task<string> GetContractAddress()
+    {
+        if (contractAddress != null) return contractAddress;
+        var url = baseUrl + "/data/address";
+        var httpClient = new LocalHttpClient(new JsonSerializationOption());
+        var result = await httpClient.Get<ContractAddress>(url);
+        contractAddress = result.contractAddress;
+        return contractAddress;
     }
 
     public static async Task<string> SignMessage()
@@ -94,10 +106,7 @@ public class WebRequests : MonoBehaviour
         // send web request with json web token in authorization header to get game id
         WWWForm form = new WWWForm();
         form.AddField("signature", signature);
-        var request =
-            UnityEngine
-                .Networking
-                .UnityWebRequest
+        var request = UnityWebRequest
                 .Post(baseUrl + "/game/start", form);
         request
             .SetRequestHeader("Authorization",
@@ -128,16 +137,11 @@ public class WebRequests : MonoBehaviour
     public static async Task<int> EndGame()
     {
         await GetNonce();
-
-        scoreKeeper = FindObjectOfType<ScoreKeeper>();
-
+        ScoreKeeper scoreKeeper = FindObjectOfType<ScoreKeeper>();
         WWWForm form = new WWWForm();
         form.AddField("score", scoreKeeper.GetScore());
         form.AddField("gameId", PlayerPrefs.GetString("GameId"));
-        var request =
-            UnityEngine
-                .Networking
-                .UnityWebRequest
+        var request = UnityWebRequest
                 .Post(baseUrl + "/game/end", form);
         request
             .SetRequestHeader("Authorization",
@@ -164,8 +168,7 @@ public class WebRequests : MonoBehaviour
 
     public static async Task<List<Score>> GetHighScores()
     {
-        var request =
-            UnityEngine.Networking.UnityWebRequest.Get(baseUrl + "/score");
+        var request = UnityWebRequest.Get(baseUrl + "/score");
         request
             .SetRequestHeader("Authorization",
             "Bearer " + PlayerPrefs.GetString("AuthToken"));
@@ -176,7 +179,7 @@ public class WebRequests : MonoBehaviour
         {
             // get the game id from the response
             var response = request.downloadHandler.text;
-            Debug.Log (response);
+            Debug.Log(response);
             var list = JsonConvert.DeserializeObject<List<Score>>(response);
             return list;
         }
@@ -188,4 +191,6 @@ public class WebRequests : MonoBehaviour
             return null;
         }
     }
+
+
 }

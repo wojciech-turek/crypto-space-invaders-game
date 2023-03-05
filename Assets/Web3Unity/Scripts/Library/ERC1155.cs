@@ -115,7 +115,7 @@ public class ERC1155
         string account = PlayerPrefs.GetString("Account");
 
         // I found that without asking for gas price it is often being miscalculated
-        string gasPrice = await EVM.GasPrice(_chain, _network);
+        string gasPrice = await EVM.GasPrice(_chain, _network,_rpc);
         string chainId = await EVM.ChainId(_chain, _network, _rpc);
 
         string[] obj = { _operator, _approved.ToString() };
